@@ -358,6 +358,10 @@
                 var ver = capas.version
 
                 $_.each(candidates, function (candidate, idx) {
+                    var theProj = null;
+                    if (candidate.srs['EPSG:3857']) {
+                        theProj = Mercator; // force SRS to 3857 if using OSM baselayer
+                    }
                     var mapLayer = new OpenLayers.Layer.WMSLayer(
                         candidate.name,
                         getMapUrl,
@@ -368,7 +372,7 @@
                             baseLayer: false,
                             singleTile: true,
                             visibility: idx == 0,
-                            projection: Mercator, // force SRS to 3857 if using OSM baselayer
+                            projection: theProj, // force SRS to 3857 if using OSM baselayer
                             ratio: 1
                         }
                     )
