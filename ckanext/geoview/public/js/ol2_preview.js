@@ -136,13 +136,11 @@
             },
             'wms' : function(resource, proxyUrl, proxyServiceUrl, layerProcessor) {
                 var parsedUrl = resource.url.split('#');
-                // use the original URL for the getMap, as there's no need for a proxy for image requests
-                var getMapUrl = parsedUrl[0].split('?')[0]; // remove query if any
-
-                var url = proxyServiceUrl || getMapUrl;
-
+                var directGetMapUrl = parsedUrl[0].split('?')[0]; // remove query if any
+                var url = proxyServiceUrl || directGetMapUrl;
                 var layerName = parsedUrl.length > 1 && parsedUrl[1];
-                OL_HELPERS.withWMSLayers(url, getMapUrl, layerProcessor, layerName);
+                // Use the proxy if available for the tiles to prevent mixed secure/insecure content
+                OL_HELPERS.withWMSLayers(url, url, layerProcessor, layerName);
             },
             'esrigeojson': function (resource, proxyUrl, proxyServiceUrl, layerProcessor) {
                 var url = proxyUrl || resource.url;
