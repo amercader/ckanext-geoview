@@ -129,20 +129,29 @@
             },
             'wfs': function(resource, proxyUrl, proxyServiceUrl, layerProcessor) {
                 var parsedUrl = resource.url.split('#');
-                var url = proxyServiceUrl || parsedUrl[0];
-
+                var simpleUrl = parsedUrl[0].split('?');
+                var directUrl = simpleUrl[0].toString(); // Without query
+                var keepArgs = simpleUrl.length > 1 && reduceWMSWFSArguments(simpleUrl[1]);
+                if (keepArgs) {
+                    if (proxyServiceUrl) proxyServiceUrl += keepArgs;
+                    directUrl += keepArgs;
+                } 
+                var url = proxyServiceUrl || directUrl;
                 var ftName = parsedUrl.length > 1 && parsedUrl[1];
                 OL_HELPERS.withFeatureTypesLayers(url, layerProcessor, ftName);
             },
             'wms' : function(resource, proxyUrl, proxyServiceUrl, layerProcessor) {
                 var parsedUrl = resource.url.split('#');
-                // use the original URL for the getMap, as there's no need for a proxy for image requests
-                var getMapUrl = parsedUrl[0].split('?')[0]; // remove query if any
-
-                var url = proxyServiceUrl || getMapUrl;
-
+                var simpleUrl = parsedUrl[0].split('?');
+                var directUrl = simpleUrl[0]; // Without query and using the original URL for the getMap, as there's no need for a proxy for image requests
+                var keepArgs = simpleUrl.length > 1 && reduceWMSWFSArguments(simpleUrl[1]);
+                if (keepArgs) {
+                    if (proxyServiceUrl) proxyServiceUrl += keepArgs;
+                    directUrl += keepArgs;
+                }
+                var url = proxyServiceUrl || directUrl;
                 var layerName = parsedUrl.length > 1 && parsedUrl[1];
-                OL_HELPERS.withWMSLayers(url, getMapUrl, layerProcessor, layerName);
+                OL_HELPERS.withWMSLayers(url, directUrl, layerProcessor, layerName);
             },
             'esrigeojson': function (resource, proxyUrl, proxyServiceUrl, layerProcessor) {
                 var url = proxyUrl || resource.url;
@@ -160,6 +169,18 @@
                 var tableId = OL_HELPERS.parseURL(resource.url).query.docid;
                 layerProcessor(OL_HELPERS.createGFTLayer(tableId, ckan.geoview.gapi_key));
             }
+        }
+        
+        var reduceWMSWFSArguments = function(input) {
+            var args = input.split('&');
+            output = '?';
+            for (i=0;i<args.length;i++) {
+                if ((args[i].toLowerCase().indexOf('service') == -1) && (args[i].toLowerCase().indexOf('request') == -1) && (args[i].toLowerCase().indexOf('version') == -1))
+                {
+                    output += (args[i] + '&');
+                }
+            }
+            return output; 
         }
 
         var withLayers = function (resource, proxyUrl, proxyServiceUrl, layerProcessor) {
