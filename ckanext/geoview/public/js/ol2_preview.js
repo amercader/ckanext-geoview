@@ -14,7 +14,7 @@
           var oldSRH = newXHR.setRequestHeader
           newXHR.setRequestHeader = function (sName, sValue) {
             if (sName === 'X-Requested-With') return;
-            oldSRH(sName, sValue)
+            oldSRH.call(newXHR, sName, sValue)
           }
           return newXHR
         }
