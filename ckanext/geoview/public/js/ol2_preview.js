@@ -6,6 +6,21 @@
 
     this.ckan.module('olpreview', function (jQuery, _) {
 
+        // monkey-patch OL2 to get CORS working properly
+        // see https://github.com/ckan/ckanext-geoview/issues/28
+        var originalXHR = OpenLayers.Request.XMLHttpRequest
+        OpenLayers.Request.XMLHttpRequest = function () {
+          var newXHR = new originalXHR()
+          var oldSRH = newXHR.setRequestHeader
+          newXHR.setRequestHeader = function (sName, sValue) {
+            if (sName === 'X-Requested-With') return;
+            oldSRH.call(newXHR, sName, sValue)
+          }
+          return newXHR
+        }
+        for (var key in originalXHR) {
+          OpenLayers.Request.XMLHttpRequest[key] = originalXHR[key]
+        }
 
         OpenLayers.Control.CKANLayerSwitcher = OpenLayers.Class(OpenLayers.Control.LayerSwitcher,
             {
