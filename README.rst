@@ -22,18 +22,22 @@ To install ckanext-geoview on a production site:
 
      source /usr/lib/ckan/default/bin/activate
 
-2. Install the ckanext-geoview Python package into your virtual environment::
+2. Install the requirements::
+
+     pip install -r pip-requirements.txt
+     
+3. Install the ckanext-geoview Python package into your virtual environment::
 
      pip install ckanext-geoview
 
-3. Add the relevant plugins to the ``ckan.plugins`` setting in your CKAN
+4. Add the relevant plugins to the ``ckan.plugins`` setting in your CKAN
    config file (by default the config file is located at
    ``/etc/ckan/default/production.ini``). Check `Available plugins`_ to see which
    ones are available and if they require further configuration.
 
-4. Add the ``resource_proxy`` plugin to the ``ckan.plugins`` setting.
+5. Add the ``resource_proxy`` plugin to the ``ckan.plugins`` setting.
 
-5. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu::
+6. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu::
 
      sudo service apache2 reload
 
