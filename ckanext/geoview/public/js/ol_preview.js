@@ -1,3 +1,4 @@
+/* global ckan, OL_HELPERS, ol, $, preload_resource */
 // Openlayers preview module
 
 (function() {
@@ -130,7 +131,110 @@
                     mapConfig.type = 'OSM'
                 }
 
-                return OL_HELPERS.createLayerFromConfig(mapConfig, true, callback);
+                return OL_HELPERS.createLayerFromConfig(mapConfig, true).then(callback);
+            },
+
+            createMapFun: function (baseMapLayerList, overlays) {
+
+                var layerSwitcher = new ol.control.HilatsLayerSwitcher();
+
+                var coordinateFormatter = function(coordinate) {
+                    var degrees = map && map.getView() && map.getView().getProjection() && (map.getView().getProjection().getUnits() == 'degrees')
+                    return ol.coordinate.toStringXY(coordinate, degrees ? 5:2);
+                };
+
+                const baseMapLayer = baseMapLayerList[0];
+
+                var options = {
+                    target: $('.map')[0],
+                    layers: baseMapLayerList,
+                    controls: [
+                        new ol.control.ZoomSlider(),
+                        new ol.control.MousePosition( {
+                            coordinateFormat: coordinateFormatter,
+                        }),
+                        layerSwitcher
+                    ],
+                    loadingDiv: false,
+                    loadingListener: function(isLoading) {
+                        layerSwitcher.isLoading(isLoading);
+                    },
+                    overlays: overlays,
+                    view: new ol.View({
+                        // projection attr should be set when creating a baselayer
+                        projection: baseMapLayer.getSource().getProjection() || OL_HELPERS.Mercator,
+                        extent: baseMapLayer.getExtent(), /* TODO_OL4 is this equivalent to maxExtent? */
+                        //center: [0,0],
+                        //zoom: 4
+                    })
+                };
+
+                var map = this.map = new OL_HELPERS.LoggingMap(options);
+                // by default stretch the map to the basemap extent or to the world
+                map.getView().fit(
+                        baseMapLayer.getExtent() || ol.proj.transformExtent(OL_HELPERS.WORLD_BBOX, OL_HELPERS.EPSG4326, map.getView().getProjection()),
+                    {constrainResolution: false}
+                );
+
+                var highlighter = new ol.interaction.Select({
+                    toggleCondition : function(evt) {return false},
+                    multi: true,
+                    condition: ol.events.condition.pointerMove
+                });
+                map.addInteraction(highlighter);
+
+                // force a reload of all vector sources on projection change
+                map.getView().on('change:projection', function() {
+                    map.getLayers().forEach(function(layer) {
+                        if (layer instanceof ol.layer.Vector) {
+                            layer.getSource().clear();
+                        }
+                    });
+                });
+                map.on('change:view', function() {
+                    map.getLayers().forEach(function(layer) {
+                        if (layer instanceof ol.layer.Vector) {
+                            layer.getSource().clear();
+                        }
+                    });
+                });
+
+
+                var fragMap = OL_HELPERS.parseKVP((window.parent || window).location.hash && (window.parent || window).location.hash.substring(1));
+
+                var bbox = fragMap.bbox && fragMap.bbox.split(',').map(parseFloat)
+                var bbox = bbox && ol.proj.transformExtent(bbox, OL_HELPERS.EPSG4326, this.map.getProjection());
+                if (bbox) this.map.zoomToExtent(bbox);
+
+                /* Update URL with current bbox
+                var $map = this.map;
+                var mapChangeListener = function() {
+                    var newBbox = $map.getExtent() && $map.getExtent().transform($map.getProjectionObject(), OL_HELPERS.EPSG4326).toString()
+
+                    if (newBbox) {
+                        var fragMap = OL_HELPERS.parseKVP((window.parent || window).location.hash && (window.parent || window).location.hash.substring(1));
+                        fragMap['bbox'] = newBbox;
+
+                        (window.parent || window).location.hash = OL_HELPERS.kvp2string(fragMap)
+                    }
+                }
+
+
+                // listen to bbox changes to update URL fragment
+                this.map.events.register("moveend", this.map, mapChangeListener);
+
+                this.map.events.register("zoomend", this.map, mapChangeListener);
+
+                */
+
+
+                var proxyUrl = this.options.proxy_url;
+                var proxyServiceUrl = this.options.proxy_service_url;
+
+                ckan.geoview.googleApiKey = this.options.gapi_key;
+
+
+                withLayers(preload_resource, proxyUrl, proxyServiceUrl, $_.bind(this.addLayer, this), this.map);
             },
 
             _onReady: function () {
@@ -169,106 +273,6 @@
                     }))
 
 
-                var createMapFun = function(baseMapLayer) {
-
-                    var layerSwitcher = new ol.control.HilatsLayerSwitcher();
-
-                    var coordinateFormatter = function(coordinate) {
-                        var degrees = map && map.getView() && map.getView().getProjection() && (map.getView().getProjection().getUnits() == 'degrees')
-                        return ol.coordinate.toStringXY(coordinate, degrees ? 5:2);
-                    };
-
-                    var options = {
-                        target: $('.map')[0],
-                        layers: [baseMapLayer],
-                        controls: [
-                            new ol.control.ZoomSlider(),
-                            new ol.control.MousePosition( {
-                                coordinateFormat: coordinateFormatter,
-                            }),
-                            layerSwitcher
-                        ],
-                        loadingDiv: false,
-                        loadingListener: function(isLoading) {
-                            layerSwitcher.isLoading(isLoading)
-                        },
-                        overlays: overlays,
-                        view: new ol.View({
-                            // projection attr should be set when creating a baselayer
-                            projection: baseMapLayer.getSource().getProjection() || OL_HELPERS.Mercator,
-                            extent: baseMapLayer.getExtent(), /* TODO_OL4 is this equivalent to maxExtent? */
-                            //center: [0,0],
-                            //zoom: 4
-                        })
-                    }
-
-                    var map = this.map = new OL_HELPERS.LoggingMap(options);
-                    // by default stretch the map to the basemap extent or to the world
-                    map.getView().fit(
-                            baseMapLayer.getExtent() || ol.proj.transformExtent(OL_HELPERS.WORLD_BBOX, OL_HELPERS.EPSG4326, map.getView().getProjection()),
-                        {constrainResolution: false}
-                    );
-
-                    var highlighter = new ol.interaction.Select({
-                        toggleCondition : function(evt) {return false},
-                        multi: true,
-                        condition: ol.events.condition.pointerMove
-                    });
-                    map.addInteraction(highlighter);
-
-                    // force a reload of all vector sources on projection change
-                    map.getView().on('change:projection', function() {
-                        map.getLayers().forEach(function(layer) {
-                            if (layer instanceof ol.layer.Vector) {
-                                layer.getSource().clear();
-                            }
-                        });
-                    });
-                    map.on('change:view', function() {
-                        map.getLayers().forEach(function(layer) {
-                            if (layer instanceof ol.layer.Vector) {
-                                layer.getSource().clear();
-                            }
-                        });
-                    });
-
-
-                    var fragMap = OL_HELPERS.parseKVP((window.parent || window).location.hash && (window.parent || window).location.hash.substring(1));
-
-                    var bbox = fragMap.bbox && fragMap.bbox.split(',').map(parseFloat)
-                    var bbox = bbox && ol.proj.transformExtent(bbox, OL_HELPERS.EPSG4326, this.map.getProjection());
-                    if (bbox) this.map.zoomToExtent(bbox);
-
-                    /* Update URL with current bbox
-                    var $map = this.map;
-                    var mapChangeListener = function() {
-                        var newBbox = $map.getExtent() && $map.getExtent().transform($map.getProjectionObject(), OL_HELPERS.EPSG4326).toString()
-
-                        if (newBbox) {
-                            var fragMap = OL_HELPERS.parseKVP((window.parent || window).location.hash && (window.parent || window).location.hash.substring(1));
-                            fragMap['bbox'] = newBbox;
-
-                            (window.parent || window).location.hash = OL_HELPERS.kvp2string(fragMap)
-                        }
-                    }
-
-
-                    // listen to bbox changes to update URL fragment
-                    this.map.events.register("moveend", this.map, mapChangeListener);
-
-                    this.map.events.register("zoomend", this.map, mapChangeListener);
-
-                    */
-
-
-                    var proxyUrl = this.options.proxy_url;
-                    var proxyServiceUrl = this.options.proxy_service_url;
-
-                    ckan.geoview.googleApiKey = this.options.gapi_key;
-
-
-                    withLayers(preload_resource, proxyUrl, proxyServiceUrl, $_.bind(this.addLayer, this), this.map);
-                }
 
                 var $this = this;
 
@@ -289,8 +293,8 @@
                 this._commonBaseLayer(
                     baseMapsConfig[0],
                     function(layer) {
-                        baseMapsConfig[0].$ol_layer = layer
-                        $_.bind(createMapFun,$this)(layer)
+                        baseMapsConfig[0].$ol_layer = layer;
+                        $this.createMapFun(layer, overlays);
 
                         // add all configured basemap layers
                         if (baseMapsConfig.length > 1) {
