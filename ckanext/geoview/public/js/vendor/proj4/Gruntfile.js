@@ -1,5 +1,7 @@
 var json = require('rollup-plugin-json');
 var nodeResolve = require('rollup-plugin-node-resolve');
+var replace = require('rollup-plugin-replace');
+var pkg = require('./package.json');
 
 var projs = [
   'tmerc',
@@ -26,9 +28,14 @@ var projs = [
   'vandg',
   'aeqd',
   'ortho',
-  'qsc'
+  'qsc',
+  'robin',
+  'geocent',
+  'tpers',
+  'geos',
+  'eqearth'
 ];
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     connect: {
@@ -61,6 +68,9 @@ module.exports = function(grunt) {
         format: "umd",
         moduleName: "proj4",
         plugins: [
+          replace({
+            __VERSION__: pkg.version
+          }),
           json(),
           nodeResolve()
         ]
@@ -74,7 +84,7 @@ module.exports = function(grunt) {
       options: {
         report: 'gzip',
         mangle:{
-          except: ['proj4','Projection','Point']
+          reserved: ['proj4','Projection','Point']
         },
       },
       all: {

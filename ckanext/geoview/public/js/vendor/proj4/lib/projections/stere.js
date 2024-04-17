@@ -12,6 +12,13 @@ export function ssfn_(phit, sinphi, eccen) {
 }
 
 export function init() {
+
+  // setting default parameters
+  this.x0 = this.x0 || 0;
+  this.y0 = this.y0 || 0;
+  this.lat0 = this.lat0 || 0;
+  this.long0 = this.long0 || 0;
+
   this.coslat0 = Math.cos(this.lat0);
   this.sinlat0 = Math.sin(this.lat0);
   if (this.sphere) {
@@ -33,7 +40,9 @@ export function init() {
       }
     }
     this.cons = Math.sqrt(Math.pow(1 + this.e, 1 + this.e) * Math.pow(1 - this.e, 1 - this.e));
-    if (this.k0 === 1 && !isNaN(this.lat_ts) && Math.abs(this.coslat0) <= EPSLN) {
+    if (this.k0 === 1 && !isNaN(this.lat_ts) && Math.abs(this.coslat0) <= EPSLN && Math.abs(Math.cos(this.lat_ts)) > EPSLN) {
+      // When k0 is 1 (default value) and lat_ts is a vaild number and lat0 is at a pole and lat_ts is not at a pole
+      // Recalculate k0 using formula 21-35 from p161 of Snyder, 1987
       this.k0 = 0.5 * this.cons * msfnz(this.e, Math.sin(this.lat_ts), Math.cos(this.lat_ts)) / tsfnz(this.e, this.con * this.lat_ts, this.con * Math.sin(this.lat_ts));
     }
     this.ms1 = msfnz(this.e, this.sinlat0, this.coslat0);
@@ -103,7 +112,7 @@ export function inverse(p) {
   var lon, lat, ts, ce, Chi;
   var rh = Math.sqrt(p.x * p.x + p.y * p.y);
   if (this.sphere) {
-    var c = 2 * Math.atan(rh / (0.5 * this.a * this.k0));
+    var c = 2 * Math.atan(rh / (2 * this.a * this.k0));
     lon = this.long0;
     lat = this.lat0;
     if (rh <= EPSLN) {
@@ -164,7 +173,7 @@ export function inverse(p) {
 
 }
 
-export var names = ["stere", "Stereographic_South_Pole", "Polar Stereographic (variant B)"];
+export var names = ["stere", "Stereographic_South_Pole", "Polar Stereographic (variant B)", "Polar_Stereographic"];
 export default {
   init: init,
   forward: forward,

@@ -1,6 +1,6 @@
 {
   "name": "proj4leaflet",
-  "version": "0.7.2",
+  "version": "1.0.2",
   "description": "Smooth Proj4js integration with Leaflet",
   "main": "src/proj4leaflet.js",
   "directories": {
@@ -8,7 +8,7 @@
     "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha-phantomjs test/mocha.html"
   },
   "repository": {
     "type": "git",
@@ -22,21 +22,36 @@
   ],
   "author": "Per Liedman <per.liedman@kartena.se> (https://github.com/perliedman/)",
   "contributors": [
-    "Mattias Bengtsson (https://github.com/moonlite/)",
-    "Christopher Fredén (https://github.com/icetan/)",
     "Peter Thorin (https://github.com/pthorin/)",
+    "Semone Kallin Thander (https://github.com/semone/)",
     "S. Andrew Sheppard (https://github.com/sheppard)",
     "Leigh Hunt (https://github.com/leighghunt/)",
+    "Andris Nolendorfs (https://github.com/theashyster)",
     "Vladimir Agafonkin (https://github.com/mourner)",
+    "Juuso Lehtinen (https://github.com/jleh)",
+    "Mattias Bengtsson (https://github.com/moonlite/)",
+    "Denis Rykov (http://github.com/drnextgis) ",
+    "Jose manuel Vivó Arnal (Chema) (http://github.com/jmvivo) ",
+    "Daniel Garcia (http://github.com/keyjote) ",
     "Mathieu Leplatre (https://github.com/leplatrem)",
-    "fnicollet (https://github.com/fnicollet)"
+    "Benny Lichtner (http://github.com/bennlich) ",
+    "Christopher Fredén (https://github.com/icetan/)",
+    "dpzaba (http://github.com/dpzaba) ",
+    "Edward Mac Gillavry (http://github.com/emacgillavry) ",
+    "Emil Goude (http://github.com/Stockholmsnovis) ",
+    "Simon Legner (http://github.com/simon04) ",
+    "Tom Blackmore (http://github.com/tablackmore) ",
+    "Fabien NICOLLET (https://github.com/fnicollet)"
   ],
-  "license": "MIT",
+  "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/kartena/Proj4Leaflet/issues"
   },
   "dependencies": {
-    "leaflet": "~0.7.0",
-    "proj4": "~2.0.0"
+    "proj4": "^2.3.14"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "mocha-phantomjs": "^4.1.0"
   }
 }

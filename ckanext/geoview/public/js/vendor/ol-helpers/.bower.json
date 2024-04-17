@@ -12,18 +12,17 @@
     "ol-helpers.css"
   ],
   "dependencies": {
-    "underscore": ">=1.4.2",
-    "openlayers": "https://github.com/openlayers/openlayers/releases/download/v4.2.0/v4.2.0-dist.zip",
-    "fetch": "^2.0.3"
+    "underscore": ">=1.13.6",
+    "openlayers": "https://github.com/openlayers/openlayers/releases/download/v9.1.0/v9.1.0-package.zip"
   },
-  "homepage": "https://github.com/pduchesne/ol-helpers",
-  "_release": "254a895027",
+  "homepage": "https://github.com/derilinx/ol-helpers",
+  "_release": "dcdcc9ddb9",
   "_resolution": {
     "type": "branch",
-    "branch": "ol4",
-    "commit": "254a895027291dcb9b79db746d0a71d31955a220"
+    "branch": "ol9",
+    "commit": "dcdcc9ddb9d8e5f7bb16f4d2507cc7142a82f53a"
   },
-  "_source": "git://github.com/pduchesne/ol-helpers.git",
-  "_target": "ol4",
-  "_originalSource": "pduchesne/ol-helpers"
+  "_source": "https://github.com/derilinx/ol-helpers.git",
+  "_target": "ol9",
+  "_originalSource": "derilinx/ol-helpers"
 }

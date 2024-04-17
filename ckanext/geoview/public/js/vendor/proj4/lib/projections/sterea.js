@@ -1,5 +1,6 @@
 import gauss from './gauss';
 import adjust_lon from '../common/adjust_lon';
+import hypot from '../common/hypot';
 
 export function init() {
   gauss.init.apply(this);
@@ -36,7 +37,7 @@ export function inverse(p) {
 
   p.x /= this.k0;
   p.y /= this.k0;
-  if ((rho = Math.sqrt(p.x * p.x + p.y * p.y))) {
+  if ((rho = hypot(p.x, p.y))) {
     var c = 2 * Math.atan2(rho, this.R2);
     sinc = Math.sin(c);
     cosc = Math.cos(c);
@@ -55,7 +56,7 @@ export function inverse(p) {
   return p;
 }
 
-export var names = ["Stereographic_North_Pole", "Oblique_Stereographic", "Polar_Stereographic", "sterea","Oblique Stereographic Alternative"];
+export var names = ["Stereographic_North_Pole", "Oblique_Stereographic", "sterea","Oblique Stereographic Alternative","Double_Stereographic"];
 export default {
   init: init,
   forward: forward,

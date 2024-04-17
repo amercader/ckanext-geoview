@@ -46,6 +46,9 @@ export default function(defData) {
     alpha: function(v) {
       self.alpha = parseFloat(v) * D2R;
     },
+    gamma: function(v) {
+      self.rectified_grid_angle = parseFloat(v);
+    },
     lonc: function(v) {
       self.longc = v * D2R;
     },
@@ -66,6 +69,9 @@ export default function(defData) {
     },
     b: function(v) {
       self.b = parseFloat(v);
+    },
+    r: function(v) {
+      self.a = self.b = parseFloat(v);
     },
     r_a: function() {
       self.R_A = true;
@@ -111,6 +117,9 @@ export default function(defData) {
       if (v.length === 3 && legalAxis.indexOf(v.substr(0, 1)) !== -1 && legalAxis.indexOf(v.substr(1, 1)) !== -1 && legalAxis.indexOf(v.substr(2, 1)) !== -1) {
         self.axis = v;
       }
+    },
+    approx: function() {
+      self.approx = true;
     }
   };
   for (paramName in paramObj) {

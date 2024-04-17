@@ -22,6 +22,11 @@ import vandg from "./projections/vandg";
 import aegd from "./projections/aeqd";
 import etmerc from './projections/etmerc';
 import qsc from './projections/qsc';
+import robin from './projections/robin';
+import geocent from './projections/geocent';
+import tpers from './projections/tpers';
+import geos from './projections/geos';
+import eqearth from "./projections/eqearth";
 
 var projs = [
   tmerc,
@@ -47,11 +52,16 @@ var projs = [
   vandg,
   aegd,
   etmerc,
-  qsc
+  qsc,
+  robin,
+  geocent,
+  tpers,
+  geos,
+  eqearth
 ];
 
-export default function(proj4){
-  projs.forEach(function(proj){
+export default function (proj4) {
+  projs.forEach(function (proj) {
     proj4.Proj.projections.add(proj);
   });
 }

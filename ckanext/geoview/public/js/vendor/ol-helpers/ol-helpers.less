@@ -1,27 +1,115 @@
 /* OpenLayers styling */
 .ol-viewport {
 
+  font-family: "Helvetica Neue Light", "Lucida Grande", "Calibri", "Arial", sans-serif;
+  font-size: 8pt;
+
   >canvas {
     // this is needed for proper processing of height:100% style on HighDPI canvas
     position: absolute;
   }
 
+  .ol-feature-popup {
+    background-color: rgba(0,0,0,0.8);
+    border-radius: 2px;
+    color: white;
+    margin-top: 5px;
+    margin-left: 5px;
+
+    .popupContent > div {
+      padding: 3px;
+    }
+
+    .popupContent > table {
+      margin: 3px;
+      .propKey {
+        text-align: right;
+        padding-right: 5px;
+      }
+      .propValue {
+        text-align: left;
+      }
+    }
+
+    .name {
+      font-weight: bold;
+      border-bottom: 1px solid #e5e4e7;
+    }
+  }
+
+  .ol-mouse-position {
+    background-color: #FFFFFFB0;
+    padding: 1px 5px;
+    font-size: medium;
+    font-family: "Courier New", courier, monospace;
+    white-space: pre;
+  }
+
+  .ol-feature-details {
+      position: absolute;
+
+      background-color: rgba(0,0,0,0.75);
+      border-radius: 2px;
+      color: white;
+      margin: 5px;
+
+      right: 0px;
+      max-width: 30%;
+      max-height: 100%;
+      overflow: auto;
+      div.featureDetails {
+        > div {
+          padding: 6px;
+          text-align: left;
+        }
+
+        > .content {
+          > table {
+            margin: 3px;
+
+            tr:hover {
+              background-color: black;
+            }
+
+            .propKey {
+              text-align: right;
+              padding-right: 5px;
+              color: #C5C5C5;
+            }
+            .propValue {
+              text-align: left;
+            }
+          }
+        }
+
+        > .name {
+          position: sticky;
+          top: 0px;
+          background-color: rgba(0, 0, 0, 0.75);
+          font-weight: bold;
+          border-bottom: 1px solid #e5e4e7;
+          height: 25px;
+          min-width: 150px;
+        }
+      }
+    }
+
   .layer-switcher {
 
     .stacked-layers {
       position: absolute;
-      right: 10px;
-      top: 40px;
+      left: 10px;
+      top: 5px;
       z-index: 100;
     }
 
     .header {
       display: none;
       position: absolute;
-      right: 12px;
-      top: 40px;
+      left: 10px;
+      top: 8px;
       z-index: 90;
-      padding: 5px 45px 5px 5px;
+      padding: 5px 5px 5px 43px;
       background-color: black;
 
       .baseLayerSelector {
@@ -41,25 +129,41 @@
     .layer-list {
       display: none;
       overflow: overlay;
-      max-height: ~"calc(100% - 50px)";
+      max-height: ~"calc(100% - 10px)";
       min-width: 150px;
-      right: 10px;
-      top: 40px;
+      left: 7px;
+      top: 5px;
       z-index: 80;
+      background-color: black;
+
+      .layer {
+        .title {
+          margin-left: 3px;
+        }
+      }
+
+      .padder {
+        height: 36px;
+        width: 100%;
+        background-color: black;
+        position: sticky;
+        top: 0;
+        box-shadow: 0px 1px 1px rgba(0, 0, 0, 1);
+      }
 
       .panel {
-        background-color: black;
+        background-color: transparent;
         color: white;
-        padding: 5px;
+        padding: 0px 4px;
         margin-bottom: 0px;
 
         ul {
           padding: 0px;
-          margin-top: 30px;
 
           li {
             list-style-type: none;
             text-align: left;
+            white-space: nowrap;
           }
         }
       }
@@ -70,6 +174,31 @@
     }
   }
 }
+
+
+/* simple circle loader */
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.simple_loader {
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  border: .25rem solid rgba(255,255,255, 0.2);
+  border-top-color: white;
+  animation: spin 1s infinite linear;
+}
+
+
+
+
 
 /* Spinning loader */
 

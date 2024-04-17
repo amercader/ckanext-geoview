@@ -1,14 +1,11 @@
 {
   "name": "ckanext-geoview",
-  "version": "0.0.2",
+  "version": "0.1.1",
   "dependencies": {
-    "ol-helpers": "pduchesne/ol-helpers#ol4",
-    "leaflet": "~0.7.7",
-    "proj4leaflet": "~0.7.2",
-    "proj4": "^2.3.17"
+    "ol-helpers": "derilinx/ol-helpers#ol9",
+    "leaflet": "1.9.4",
+    "proj4leaflet": "1.0.2",
+    "proj4": "^2.11.0"
   },
-  "appPath": "ckanext/geoview/public",
-  "resolutions": {
-    "proj4": "^2.3.17"
-  }
+  "appPath": "ckanext/geoview/public"
 }
