@@ -97,7 +97,7 @@
                 if (ckan.geoview && ckan.geoview.feature_style) {
                     var styleMapJson = JSON.parse(ckan.geoview.feature_style)
                     /* TODO_OL4 how is stylemap converted to OL4 ? */
-                    //resourceLayer.styleMap = new OpenLayers.StyleMap(styleMapJson)
+                    resourceLayer.setStyle(styleMapJson);
                 }
 
                 if (this.options.ol_config.hide_overlays &&
