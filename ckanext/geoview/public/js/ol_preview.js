@@ -17,11 +17,12 @@
 
         var esrirestExtractor = function(resource, proxyUrl, proxyServiceUrl, layerProcessor, map) {
             var parsedUrl = resource.url.split('#');
-            var url = proxyServiceUrl || parsedUrl[0];
+            var url = parsedUrl[0]; // proxy urls don't work with ckan's resource proxy and the /query added on at the end.
 
             var layerName = parsedUrl.length > 1 && parsedUrl[1];
+            var proxifyFn = (_url) => _url.includes('/query') ? url + _url : proxyServiceUrl + _url;
 
-            OL_HELPERS.withArcGisLayers(url, layerProcessor, layerName, parsedUrl[0]);
+            OL_HELPERS.withArcGisLayers('', layerProcessor, layerName, proxifyFn, map);
         }
 
         ckan.geoview.layerExtractors = {
