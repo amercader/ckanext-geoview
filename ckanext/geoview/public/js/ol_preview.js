@@ -94,18 +94,14 @@
 
             addLayer: function (resourceLayer) {
 
-                if (ckan.geoview && ckan.geoview.feature_style) {
-                    var styleMapJson = JSON.parse(ckan.geoview.feature_style)
-                    /* TODO_OL4 how is stylemap converted to OL4 ? */
-                    resourceLayer.setStyle(styleMapJson);
-                }
+                resourceLayer.setStyle(this.defaultStyle);
 
                 if (this.options.ol_config.hide_overlays &&
                     this.options.ol_config.hide_overlays.toLowerCase() == "true") {
                     resourceLayer.setVisibility(false);
                 }
 
-                this.map.addLayerWithExtent(resourceLayer)
+                this.map.addLayerWithExtent(resourceLayer);
             },
 
             _commonBaseLayer: function(mapConfig, callback, module) {
@@ -137,6 +133,20 @@
             createMapFun: function (baseMapLayerList, overlays) {
 
                 var layerSwitcher = new ol.control.HilatsLayerSwitcher();
+
+                var styleMapJson = OL_HELPERS.DEFAULT_STYLEMAP;
+
+                if (ckan.geoview && ckan.geoview.feature_style) {
+                    styleMapJson = JSON.parse(ckan.geoview.feature_style);
+                    // default style can be json w/ expressions, highlight style needs to be objectified
+                    if (styleMapJson.highlight) {
+                        // must convert highlight style to objects.
+                        styleMapJson.highlight = OL_HELPERS.makeStyle(styleMapJson.highlight);
+                    }
+                }
+                this.defaultStyle = styleMapJson.default || styleMapJson;
+                this.highlightStyle = styleMapJson.highlight || undefined;
+
 
                 var coordinateFormatter = function(coordinate) {
                     var degrees = map && map.getView() && map.getView().getProjection() && (map.getView().getProjection().getUnits() == 'degrees')
@@ -176,12 +186,20 @@
                     {constrainResolution: false}
                 );
 
-                var highlighter = new ol.interaction.Select({
-                    toggleCondition : function(evt) {return false},
-                    multi: true,
-                    condition: ol.events.condition.pointerMove
+                map.highlightStyle = this.highlightStyle;
+                let selected = null;
+                map.on('pointermove', function (e) {
+                    if (selected !== null) {
+                        selected.setStyle(undefined);
+                        selected = null;
+                    }
+
+                    map.forEachFeatureAtPixel(e.pixel, function (f) {
+                        selected = f;
+                        f.setStyle(map.highlightStyle);
+                        return true;
+                    });
                 });
-                map.addInteraction(highlighter);
 
                 // force a reload of all vector sources on projection change
                 map.getView().on('change:projection', function() {

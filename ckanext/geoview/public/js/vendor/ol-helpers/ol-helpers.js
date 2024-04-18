@@ -1,3 +1,4 @@
+/* globals ol, proj4 */
 // Openlayers preview module
 
 if (typeof proj4 != "undefined" && proj4) {
@@ -3098,6 +3099,74 @@ ol.proj.addProjection(createEPSG4326Proj('EPSG:4326:LONLAT', 'enu'));
 
         return map;
     }
+
+
+    // after https://gist.github.com/pagameba/671d63f7ee95e4ebe44b
+    const styleMap = {
+        fill: function(obj) {
+          if (typeof obj == 'string' || Array.isArray(obj)) {
+            obj = { color: obj };
+          }
+          return new ol.style.Fill(obj);
+        },
+        stroke: function(obj) {
+          if (typeof obj == 'string' || Array.isArray(obj)) {
+            obj = { color: obj };
+          } else if (typeof obj == 'number') {
+            obj = { width: obj };
+          }
+          return new ol.style.Stroke(obj);
+        },
+        text: function(obj) {
+          if (typeof obj == 'string') {
+            obj = { text: obj };
+          }
+          if (obj.fill) {
+            obj.fill = styleMap.fill(obj.fill);
+          }
+          if (obj.stroke) {
+            obj.stroke = styleMap.stroke(obj.stroke);
+          }
+          return new ol.style.Text(obj);
+        },
+        circle: function(obj) {
+          if (obj.fill) {
+            obj.fill = styleMap.fill(obj.fill);
+          }
+          if (obj.stroke) {
+            obj.stroke = styleMap.stroke(obj.stroke);
+          }
+          return new ol.style.Circle(obj);
+        },
+        icon: function(obj) {
+          return new ol.style.Icon(obj);
+        },
+        image: function(obj) {
+          if (typeof obj.radius !== 'undefined') {
+            return styleMap.circle(obj);
+          }
+          return styleMap.icon(obj);
+        }
+      };
+
+      OL_HELPERS.makeStyle = function(styleSpec) {
+        if (Array.isArray(styleSpec)) {
+          return styleSpec.map(function(oneSpec) {
+            return OL_HELPERS.makeStyle(oneSpec);
+          });
+        }
+
+        var obj = {};
+        Object.keys(styleSpec).forEach(function(key) {
+          var val = styleSpec[key];
+          if (styleMap[key]) {
+            obj[key] = new styleMap[key](val);
+          } else {
+            obj[key] = val;
+          }
+        });
+        return new ol.style.Style(obj);
+      }
 
 }) ();
 
