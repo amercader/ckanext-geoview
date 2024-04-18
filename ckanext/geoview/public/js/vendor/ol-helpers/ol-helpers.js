@@ -1,4 +1,4 @@
-/* globals ol, proj4 */
+/* global ol, proj4, $, Proj4js */
 // Openlayers preview module
 
 if (typeof proj4 != "undefined" && proj4) {
