@@ -381,3 +381,56 @@ To publish a new version to PyPI follow these steps:
 .. _GeoJSON: http://geojson.org/
 .. _Shapefile: https://en.wikipedia.org/wiki/Shapefile
 .. _ckanext-spatial: https://github.com/ckan/ckanext-spatial
+
+
+
+* update bower, updating pins in bower.json
+  ```
+  docker run -ti --rm -v `pwd`:/src node:18 bash
+  npm install -g bower
+  cd /src
+  bower update
+  cd /src/ckanext/geoview/public/js/vendor/leaflet
+  npm install .
+  npm run build
+  ```
+
+* OL User Spec'd View Styles:
+  - Default can be json only, using expressions
+  - Highlight has to use old school style objects, so needs to be directly convertible to ol.style.Style objects.
+  - Highlight is optional.
+  - If it's just a set of json styles, it's the default style, implying no highlight style.
+```
+  {
+  "default": [
+    {
+      "filter": [
+        ">",
+        [
+          "get",
+          "FIELD_NAME"
+        ],
+        20
+      ],
+      "style": {
+        "circle-fill-color": "red",
+        "circle-radius": 5
+      }
+    },
+    {
+      "else": true,
+      "style": {
+        "circle-fill-color": "blue",
+        "circle-radius": 5
+      }
+    }
+  ],
+  "highlight": {
+    "image": {
+      "fill": "white",
+      "stroke": "red",
+      "radius": 10
+    }
+  }
+}
+```
