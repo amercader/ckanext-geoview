@@ -750,20 +750,23 @@ ol.proj.addProjection(createEPSG4326Proj('EPSG:4326:LONLAT', 'enu'));
                 if (displayDetails) {
                     var feature = features[0];
 
-                    var layerTitle = feature && feature.layer && feature.layer.get('title')
-                    htmlContent = "<div class='name'>" + layerTitle +" : <b>"+ (feature.get('name') || feature.getId()) + "</b></div>";
+                    var layerTitle = feature && feature.layer && feature.layer.get('title');
+                    var featureTitle = feature.get('name') || feature.getId() || '';
 
+                    htmlContent = "<div class='name'>" + layerTitle + (featureTitle ? (": <b>"+ featureTitle + "</b>") :'') + "</div>";
                     htmlContent += "<table>";
                     feature.getKeys().forEach(function(prop) {
-                        htmlContent += "<tr><td class='propKey'>" + prop + "</td><td class='propValue'>" + feature.get(prop) + "</td></tr></div>"
-                    })
-                    htmlContent += "</table>"
+                        if (prop.startsWith('_') || typeof(feature.get(prop)) ==='object') { return; }
+                        htmlContent += "<tr><td class='propKey'>" + prop + "</td><td class='propValue'>" + feature.get(prop) + "</td></tr></div>";
+                    });
+                    htmlContent += "</table>";
                 } else {
                     htmlContent = "";
                     features.forEach(function(feature) {
-                        var layerTitle = feature && feature.layer && feature.layer.get('title')
-                        htmlContent += "<div class='name'>" + layerTitle +" : <b>"+ (feature.get('name') || feature.getId()) + "</b></div>";
-                    })
+                        var layerTitle = feature && feature.layer && feature.layer.get('title');
+                        var featureTitle = feature.get('name') || feature.getId() || '';
+                        htmlContent += "<div class='name'>" + layerTitle + (featureTitle ? (": <b>"+ featureTitle + "</b>") :'') + "</div>";
+                    });
                 }
 
                 return htmlContent;
@@ -834,7 +837,7 @@ ol.proj.addProjection(createEPSG4326Proj('EPSG:4326:LONLAT', 'enu'));
                     if (changed) {
                         if (_this.displayDetailsTimeout)
                             clearTimeout(_this.displayDetailsTimeout)
-                        _this.setFeatures(features);
+                        _this.setFeatures(features, _this.showDetails);
                         if (_this.showDetails)
                             _this.displayDetailsTimeout = setTimeout(function() {_this.setFeatures(_this.displayedFeatures, true);}, 500);
                     }
