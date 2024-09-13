@@ -35,6 +35,7 @@ class GeoViewBase(p.SingletonPlugin):
     same_domain = False
 
     def configure(self, config):
+        print("HOOOOOLLALALALLA")
         basemapConfigFile = toolkit.config.get(
             "ckanext.geoview.basemaps", None
         )
