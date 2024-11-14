@@ -3,6 +3,7 @@ ckanext-geoview - Geospatial viewer for CKAN resources
 ======================================================
 
 
+
 This extension contains view plugins to display geospatial files and services in CKAN.
 It contains an OpenLayers based viewer originally developed by `Philippe Duchesne`_ and other view plugins that
 used to be part of ckanext-spatial_.
