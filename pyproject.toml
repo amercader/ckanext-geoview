@@ -1,0 +1,40 @@
+#
+#
+[project]
+name = "ckanext-geoview"
+version = "0.2.0"
+description = "Geospatial viewers for CKAN resources"
+readme = "README.md"
+authors = [
+    {name = "Philippe Duchesne, Adrià Mercader and contributors", email = "tech-team@ckan.org"}
+]
+license = {text = "MIT"}
+classifiers = []
+keywords = []
+dependencies = []
+
+[project.urls]
+Homepage = "http://github.com/ckan/ckanext-geoview"
+
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+#[build-system]
+#requires = ["setuptools", "wheel"]
+#build-backend = "setuptools.build_meta"
+#
+[tool.setuptools]
+#packages = ["ckanext"]
+#namespace-packages = ["ckanext"]
+include-package-data = true
+
+[tool.setuptools.packages]
+find = {}
+
+
+[project.entry-points."ckan.plugins"]
+geo_view = "ckanext.geoview.plugin:OLGeoView"
+geojson_view = "ckanext.geoview.plugin:GeoJSONView"
+wmts_view = "ckanext.geoview.plugin:WMTSView"
+shp_view = "ckanext.geoview.plugin:SHPView"
