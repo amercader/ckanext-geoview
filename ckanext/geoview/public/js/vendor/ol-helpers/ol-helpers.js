@@ -233,10 +233,11 @@ ol.proj.addProjection(createEPSG4326Proj('EPSG:4326:LONLAT', 'enu'));
 
 
     ol.Map.prototype.addLayerWithExtent = function (layer) {
+        layer.setVisible(false);
         this.addLayer(layer)
 
         // fit to layer extent only if layer visible
-        if (layer.getVisible() && layer.getSource()) {
+        if (layer.getSource()) {
 
             var _view = this.getView();
             var zoomToExtent = function() {
@@ -255,8 +256,10 @@ ol.proj.addProjection(createEPSG4326Proj('EPSG:4326:LONLAT', 'enu'));
                     isNumeric(projectedBbox[1]) &&
                     isNumeric(projectedBbox[2]) &&
                     isNumeric(projectedBbox[3]))
-
-                    _view.fit(projectedBbox, {constrainResolution: false})
+                {
+                    _view.fit(projectedBbox, {constrainResolution: false});
+                    layer.setVisible(true);
+                }
                 else {
                     console.warn("Adding layer : could not find extent to zoom to")
                 }
